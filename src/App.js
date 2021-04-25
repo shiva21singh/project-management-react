@@ -3,6 +3,7 @@ import './App.css';
 import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import _ from "lodash";
 import {v4} from "uuid";
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 const item = {
   id: v4(),
@@ -23,17 +24,19 @@ function App() {
   const [text, setText] = useState("")
   const [taskStatus, setTaskStatus] = useState(false)
 
+  const [show, toggleShow] = React.useState(true);
+
   const [state, setState] = useState({
-    "todo": {
-      title: "Todo",
+    "current": {
+      title: "Current",
       items: [item, item2]
     },
-    "in-progress": {
-      title: "In Progress",
+    "icebox": {
+      title: "IceBox",
       items: []
     },
-    "done": {
-      title: "Completed",
+    "backlog": {
+      title: "Backlog",
       items: []
     }
   })
@@ -89,25 +92,28 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <div>
       <div>
         <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}/>
         <input type="text" value={text} onChange={(e) => setText(e.target.value)}/>
         <input type='checkbox' checked={taskStatus} value={taskStatus} onChange={(e) => setTaskStatus(e.currentTarget.checked)}/>
         <button onClick={addItem}>Add</button>
       </div>
+      <div className="App">
       <DragDropContext onDragEnd={handleDragEnd}>
         {_.map(state, (data, key) => {
           return(
-            <div key={key} className={"column"}>
+            <div key={key} className={"column"} >
               <h3>{data.title}</h3>
               <Droppable droppableId={key}>
                 {(provided, snapshot) => {
                   return(
                     <div
+
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className={"droppable-col"}
+                      className={`droppable-col` }
+
                     >
                       {data.items.map((el, index) => {
                         return(
@@ -124,6 +130,9 @@ function App() {
                                   <p>{el.title}</p>
                                   <p>{el.text}</p>
                                   <p>{el.taskStatus ? "Yess" : "Noo"}</p>
+                                  <CopyToClipboard className = "childDiv" text={`Description-${el.text}`}>
+                                    <span>Copy</span>
+                                  </CopyToClipboard>
                                 </div>
                               )
                             }}
@@ -136,10 +145,12 @@ function App() {
                 }}
               </Droppable>
               <div>Completed: {data.items.filter(task => task.taskStatus).length}/{data.items.length}</div>
+
             </div>
           )
         })}
       </DragDropContext>
+      </div>
     </div>
   );
 }
