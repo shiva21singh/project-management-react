@@ -4,36 +4,34 @@ import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import _ from "lodash";
 import {v4} from "uuid";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
+//
+// const itemCurrent = [ { id: v4(), title: "Hello1", text: "Clean the house", taskStatus: true},
+//                       { id: v4(), title: "House", text: "Clean the Bedsheet", taskStatus: false}];
 
-const item = {
-  id: v4(),
-  title: "Hello1",
-  text: "Clean the house",
-  taskStatus: true
-}
-
-const item2 = {
-  id: v4(),
-  title: "World1",
-  text: "Wash the car",
-  taskStatus: false
-}
+const item2 = [{ id: v4(), title: "World1", text: "Wash the car", taskStatus: false},
+];
 
 function App() {
-  const [title, setTitle] = useState('')
+  const [title, setTitle] = useState("")
   const [text, setText] = useState("")
   const [taskStatus, setTaskStatus] = useState(false)
 
   const [show, toggleShow] = React.useState(true);
 
+  const [tasks, setTasks] = useState ([
+      { id: v4(), title: "Hello11111", text: "Clean the house", taskStatus: true},
+      { id: v4(), title: "House", text: "Clean the Bedsheet", taskStatus: false},
+
+  ])
+  
   const [state, setState] = useState({
     "current": {
       title: "Current",
-      items: [item, item2]
+      items: tasks
     },
     "icebox": {
       title: "IceBox",
-      items: []
+      items: item2
     },
     "backlog": {
       title: "Backlog",
@@ -70,8 +68,8 @@ function App() {
     setState(prev => {
       return {
         ...prev,
-        todo: {
-          title: "Todo",
+        current: {
+          title: "Current",
           items: [
             {
               id: v4(),
@@ -80,7 +78,7 @@ function App() {
               taskStatus: taskStatus
 
             },
-            ...prev.todo.items
+            ...prev.current.items
           ]
         }
       }
@@ -91,8 +89,17 @@ function App() {
     setTaskStatus(false)
   }
 
+  const onChecked = (id) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? {...task, taskStatus: !task.taskStatus }: task
+      )
+    )
+    console.log(tasks);
+  }
+
   return (
-    <div>
+    <div >
       <div>
         <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}/>
         <input type="text" value={text} onChange={(e) => setText(e.target.value)}/>
@@ -115,11 +122,12 @@ function App() {
                       className={`droppable-col` }
 
                     >
+                    <span className="noTaskStyle">{data.items.length === 0 ? "No Task" : ""}</span>
                       {data.items.map((el, index) => {
                         return(
                           <Draggable key={el.id} index={index} draggableId={el.id}>
                             {(provided, snapshot) => {
-                              console.log(snapshot)
+
                               return(
                                 <div
                                   className={`item ${snapshot.isDragging && "dragging"}`}
@@ -127,19 +135,24 @@ function App() {
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                 >
+
                                   <p>{el.title}</p>
-                                  <p>{el.text}</p>
-                                  <p>{el.taskStatus ? "Yess" : "Noo"}</p>
-                                  <CopyToClipboard className = "childDiv" text={`Description-${el.text}`}>
-                                    <span>Copy</span>
-                                  </CopyToClipboard>
+                                  <div className = "parentDiv">
+                                    <CopyToClipboard className = "childDiv" text={el.text}>
+                                      <span>Copy</span>
+                                    </CopyToClipboard>
+                                    {el.text}
+                                  </div>
+                                  <input type='checkbox' checked={el.taskStatus} onChange={() => onChecked(el.id)}/>
+                                  {el.taskStatus ? "Yess" : "Noo"}
+
+
                                 </div>
                               )
                             }}
                           </Draggable>
                         )
                       })}
-                      {provided.placeholder}
                     </div>
                   )
                 }}

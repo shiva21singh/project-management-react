@@ -14,7 +14,7 @@
 
 .droppable-col {
     width: 100%;
-    background-color: gray;
+    background-color: #00203FFF ;
     padding: 10px 10px 0 10px;
     border-radius: 7px;
     display: flex;
@@ -24,8 +24,8 @@
 
 .item {
     margin-bottom: 10px;
-    background-color: gray;
-    color: white;
+    background-color: #ADEFD1FF;
+    color: black;
     border: 1px solid white;
     padding: 5px;
     border-radius: 7px;
@@ -33,4 +33,23 @@
 
 .item.dragging {
     background-color: coral;
+}
+.parentDiv {
+  background-color: #00203FFF;
+  color: white;
+  position: relative;
+  padding: 5px;
+}
+
+.childDiv {
+  position: absolute;
+  right: 14px;
+  /* top: 3px; */
+  background-color: lightblue;
+  cursor: pointer;
+  color: black;
+}
+.noTaskStyle {
+  color: white;
+  padding: 5px;
 }
